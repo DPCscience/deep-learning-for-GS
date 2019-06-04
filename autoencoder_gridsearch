@@ -1,0 +1,61 @@
+##################
+## FUNCTION 
+##################
+
+optAuto<-function(unit1,unit2,epo){
+  # set model
+  model <- keras_model_sequential()
+  model %>%
+    layer_dense(units = unit1, activation = "tanh", input_shape = ncol(M)) %>%
+    #layer_dense(units = unit1, activation = "tanh")%>%
+    layer_dense(units = unit2, activation = "tanh", name = "bottleneck") %>% 
+    layer_dense(units = unit1, activation = "tanh") %>%
+    layer_dense(units = ncol(M))
+  
+  # view model layers
+  summary(model)
+  # compile model
+  model %>% compile(
+    loss = "mean_squared_error", 
+    optimizer = "adam"
+  )
+  
+  # fit model
+  model %>% fit(
+    x = M, 
+    y = M, 
+    epochs = epo,
+    verbose = 0
+  )
+  
+  # evaluate the performance of the model
+  mse.ae2 <- evaluate(model, M, M)
+  return(model)
+}
+
+##################
+## RUNNING GRID SEARCH
+##################
+
+# Create a data frame containing all combinations 
+unit1 <- seq(40, 200, 20)
+unit2 <- seq(7, 50, 7)
+epo <- seq(8000, 12000, 1000)
+hyper_grid <- expand.grid(unit1=unit1,unit2=unit2,epo=epo )
+
+# Create an empty vector to store mse error values
+mse_err <- c()
+
+# Write a loop over the rows of hyper_grid to train the grid of models
+for (i in 1:nrow(hyper_grid)) {
+  
+  # Train a Random Forest model
+  model <- optAuto(unit1 = hyper_grid$unit1[i],
+                   unit2 = hyper_grid$unit2[i],
+                   epo = hyper_grid$epo[i])
+  
+  # Store MSE error for the model                      
+  mse_err[i] <-model[[1]]
+  print(mse_err[i])
+  print(i)
+}
