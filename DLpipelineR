@@ -1,0 +1,237 @@
+### Deep learning code DLpipeline from Enciso translated from python to R ..see DLpipeline repository which I forked
+### WARNING while the code presented here has been tested with the datasets are Wheat X and Y from BGLR R package, 
+### The last section of the Enciso python code still has to be translated...coming soon :) comments and suggestions duniapc77@gmail.com
+
+##History function KerasR
+LossHistory <- R6::R6Class("LossHistory",
+                           inherit = KerasCallback,
+                           
+                           public = list(
+                             
+                             losses = NULL,
+                             
+                             on_batch_end = function(batch, logs = list()) {
+                               self$losses <- c(self$losses, logs[["loss"]])
+                             }
+                           ))
+####################################################
+#### DLpipeline Enciso
+####################################################
+
+setwd("~/Desktop/deep learning NIR/")
+library("keras")
+library("tensorflow")
+# Implements a standard fully connected network (MLP) for a quantitative target
+
+# X is a N by nSNP dataset with SNP genotypes
+X = read.csv('wheat.X', header=FALSE,sep="")
+# Y is a N b nTRAIT array with phenotypes
+Y = read.csv('wheat.Y', header=FALSE,sep="")
+# The first trait is analyzed
+y = Y[,1] 
+y<-as.matrix(y)
+
+#data_partitioning
+#train_test_split
+sample <- sample.int(n = nrow(X), size = floor(.80*nrow(X)), replace = F)
+X_train <- X[sample, ]
+Y_train <- y[sample, ]
+
+X_test  <- X[-sample, ]
+Y_test <- y[-sample, ]
+
+# no. of SNPs in data
+nSNP = ncol(X) 
+model <- keras_model_sequential()
+
+model %>%
+  layer_dense(units = 64, activation = "relu", input_shape = ncol(X_train)) %>%
+  layer_dense(units = 32, activation = "softplus") %>% 
+  layer_dense(units = 1)
+
+# view model layers
+summary(model)
+# compile model
+# Model Compiling (https://keras.io/models/sequential/) 
+# compile(optimizer, loss=None, metrics=None, loss_weights=None, sample_weight_mode=None, weighted_metrics=None, target_tensors=None)
+# Stochastic Gradient Descent (‘sgd’) as optimization algorithm
+# Mean Squared Error as loss, ie, quantitative variable, regression
+
+model %>% compile(
+  loss = "mean_squared_error", 
+  optimizer = "sgd"
+)
+
+X_train<-as.matrix(X_train)
+y_train<-as.matrix(Y_train)
+
+model%>%fit(X_train, y_train, epochs=100)
+
+###Rstudio visualization
+###https://keras.rstudio.com/articles/training_visualization.html
+#history<-model%>%fit(X_train, y_train, epochs=100,validation_split=0.2,view_metrics =TRUE)
+#plot(history)
+
+# cross-validation: get predicted target values
+X_test<-as.matrix(X_test)
+y_test<-as.matrix(Y_test)
+y_hat = model%>%predict(X_test, batch_size=128)
+
+mse_prediction = model%>%evaluate(X_test, y_test, batch_size=128)
+
+cat("\nMSE in prediction =",mse_prediction )
+
+# correlation btw predicted and observed
+corr = cor(y_test,y_hat)
+cat('\nCorr obs vs pred =',corr)
+
+plot(y_test, y_hat, marker='o')
+
+
+#########################################################################################
+###### Controlling overfit: regularization, dropout and early stopping
+#########################################################################################
+
+model <- keras_model_sequential()
+model%>%layer_dense(units = 64, kernel_regularizer=regularizer_l2(0.01),
+                    input_shape = ncol(X_train),
+                    activity_regularizer=regularizer_l1(0.01),activation="relu") %>%
+  layer_dense(units = 32, activation = "softplus") %>% 
+  layer_dropout(rate = 0.2) %>% 
+  layer_dense(units = 1)
+
+model %>% compile(
+  loss = "mean_squared_error", 
+  optimizer = "sgd"
+)
+
+#train_test_split
+sample <- sample.int(n = nrow(X_train), size = floor(.90*nrow(X_train)), replace = F)
+X_train0 <- X_train[sample, ]
+Y_train0 <- y_train[sample, ]
+
+X_val  <- X_train[-sample, ]
+Y_val <- y_train[-sample, ]
+
+X_train0<-as.matrix(X_train0)
+y_train0<-as.matrix(Y_train0)
+
+X_val<-as.matrix(X_val)
+y_val<-as.matrix(Y_val)
+
+nEpochs=100
+
+# Early stopping
+early_stopper = callback_early_stopping(monitor='val_loss', patience=10, min_delta=0.01)
+model%>%fit(X_train0, y_train0, epochs=nEpochs, verbose=1, validation_data=list(X_val, y_val), callbacks=early_stopper)
+
+# cross-validation
+mse_prediction = model%>%evaluate(X_test, y_test, batch_size=128)
+
+#########################
+#hyperparameter tuning
+#########################
+#Hyperparameter ranges and Model definition
+
+acc_pearson_r <- custom_metric("acc_pearson_r", function(y_true, y_pred){
+  x = y_true
+  y = y_pred
+  mx = k_mean(x, axis=0)
+  my = k_mean(y, axis=0)
+  xm  = x - mx
+  ym=y - my
+  r_num = k_sum(xm * ym)
+  x_square_sum = k_sum(xm * xm)
+  y_square_sum = k_sum(ym * ym)
+  r_den = k_sqrt(x_square_sum * y_square_sum)
+  r = r_num / r_den
+  return (k_mean(r))
+})
+
+# model definition
+
+baby_model<-function(x, y, x_val, y_val, first_neuron,activ,batch_size){   
+  # replace the hyperparameter inputs with references to params dictionary 
+  model = keras_model_sequential()
+  model%>%layer_dense(units = first_neuron, activation = activ, input_shape = ncol(X))
+  #last neuron
+  model%>%layer_dense(units =1)
+  model%>%compile(loss="mean_squared_error", optimizer='sgd', metrics= acc_pearson_r)
+  
+  # make sure history object is returned by model.fit()
+  history<-LossHistory$new()
+  out = model%>%fit(x, y,
+                    epochs=50,
+                    validation_data=list(x_val, y_val),
+                    batch_size=batch_size,
+                    verbose=0,callbacks=list(history))
+  
+  
+  all<-list(out,model,history)
+  # modify the output model
+  return(all)
+}
+
+# simple grid search hyperparameters , unfortunately talos ipls not yet available for keras R
+
+first_neuron=c(12, 48)
+activ=c("relu", "elu")
+batch_size=c(10, 30)
+
+hyper_grid<-expand.grid(first_neuron=first_neuron,activ=activ,batch_size=batch_size)
+
+mse_err<-list()
+for (i in 1:nrow(hyper_grid)) {
+  
+  # Train the baby model
+  model <- baby_model(X_train0, y_train0,X_val, y_val,first_neuron = hyper_grid$first_neuron[i],
+                      activ = hyper_grid$activ[i],
+                      batch_size = hyper_grid$batch_size[i])
+  
+  # Store MSE error for the model                      
+  mse_err[[i]] <-model
+}
+
+###############################################
+#### PLOT results
+###############################################
+###summarize results
+plots<-data.frame()
+for (i in 1:length(mse_err)){
+  acc<-mse_err[[i]][[1]]$metrics$acc_pearson_r
+  los<-mse_err[[i]][[1]]$metrics$loss
+  acc_val<-mse_err[[i]][[1]]$metrics$val_acc_pearson_r
+  los_val<-mse_err[[i]][[1]]$metrics$val_loss
+  hype<-hyper_grid[i,]
+  all<-cbind(hype,acc,los,acc_val,los_val)
+  plots<-rbind(plots,all)
+}
+
+#########################
+####correlation plots
+#########################
+plots$activ<-as.numeric(plots$activ)
+corr_df <-
+  psych::corr.test(
+    x = plots,
+    y = NULL,
+    use = "pairwise",
+    method = "pearson",
+    alpha = .05,
+    minlength = 20
+  )
+
+# computing correlations on all included variables
+corr.mat <- round(x = corr_df$r, digits = 2)
+
+library(ggcorrplot)
+p1<-ggcorrplot(
+  corr.mat,
+  outline.color = "white",
+  ggtheme = ggplot2::theme_gray,
+  colors = c("#6D9EC1", "white", "#E46726"),
+  lab = TRUE
+)
+
+
+
