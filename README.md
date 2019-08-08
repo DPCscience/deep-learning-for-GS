@@ -1,6 +1,7 @@
 ## deep-learning for genomic prediction :seedling: :seedling: :seedling:
 
 Scripts for genomic prediction with deep learning . Application of deep learning to agriculture. 
+Comments, suggestions, corrections :mailbox: duniapc77@gmail.com
 
 ## Autoencoder_gridsearch.R 
 Function that uses an autoencoder machine learning approach for dimensionality reduction of data.This function has an bottleneck middle layer that "encodes" the data for dimensional reduction without the need to add the known predicted value. It is particularly useful as an alternative to Principal Components Analysis.
