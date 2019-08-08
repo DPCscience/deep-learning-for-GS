@@ -21,6 +21,6 @@ The basic structure ofa densely connected network consists of an input layer, L 
 Code from exercises in the datacamp website to obtain a certificate on deep learning python. Three chapters completed one to go!
 
 
-# nn_scratch.R
+## nn_scratch.R
 Neural network built from scratch, build your own neural network function and compare it with the results of the neuralnet R package. As seen on http://gradientdescending.com/deep-neural-network-from-scratch-in-r/
 
