@@ -1,5 +1,5 @@
 ## deep-learning for genomic prediction :seedling: :seedling: :seedling:
-scripts and examples
+
 Scripts for genomic prediction with deep learning . Application of deep learning to agriculture. 
 
 ## Autoencoder_gridsearch.R 
