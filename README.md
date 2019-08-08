@@ -17,4 +17,4 @@ Code from Appendix script in the paper Montesinos et al 2018
 The basic structure ofa densely connected network consists of an input layer, L output layers (for multi-trait modeling) and multiple hidden layers between the input and output layers.This type of neural network is also known as a feedforward neural network.
 
 ## datacamp_deeplearning.py
-Code from exercises in the datacamp website to get certification on deep learning python. Three chapters completed one to go!
+Code from exercises in the datacamp website to obtain a certificate on deep learning python. Three chapters completed one to go!
