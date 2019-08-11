@@ -3,8 +3,6 @@
 Scripts for genomic prediction with deep learning . Application of deep learning to agriculture. 
 Comments, suggestions, corrections :mailbox: duniapc77@gmail.com
 
-## Autoencoder_gridsearch.R 
-Function that uses an autoencoder machine learning approach for dimensionality reduction of data.This function has an bottleneck middle layer that "encodes" the data for dimensional reduction without the need to add the known predicted value. It is particularly useful as an alternative to Principal Components Analysis.
 
 ## Prediction_DLpipeline.R 
 Code from Enciso-see repository DLpipeline- written in Python translated to Keras R.While most of the code is verbatim, the hyperparameter tuning has been adapted to R capabilities by implementing a grid search instead of a random search.
@@ -17,8 +15,14 @@ Typical feedforward neural network also known as multilayer perceptron, which do
 Code from Appendix script in the paper Montesinos et al 2018
 The basic structure ofa densely connected network consists of an input layer, L output layers (for multi-trait modeling) and multiple hidden layers between the input and output layers.This type of neural network is also known as a feedforward neural network.
 
+## DeepGS_Wenlong2017.R https://github.com/cma2015/DeepGS
+From paper DeepGS Predicting phenotypes from genotypes using Deep learning. The paper is interesting because they followed a different approach, instead of a MLP, ANN or NN they use a convolutional neural network approach (CNN) and it is also not implemented in Keras. The code is implemented using MXNet, if you want to know more about the differences between DL/AI frameworks see https://skymind.com/wiki/comparison-frameworks-dl4j-tensorflow-pytorch. In brief MXNet is faster and has higher accuracy 🔥 🔥 and it can be implemented as a Keras backend, I plan to convert the DeepGS code to Keras R just because I plan to stick to Keras ..for the moment.
+
+## Autoencoder_gridsearch.R 
+Function that uses an autoencoder machine learning approach for dimensionality reduction of data.This function has an bottleneck middle layer that "encodes" the data for dimensional reduction without the need to add the known predicted value. It is particularly useful as an alternative to Principal Components Analysis.
+
 ## datacamp_deeplearning.py
-Code from exercises in the datacamp website to obtain a certificate on deep learning python. Three chapters completed one to go!
+Code from exercises in the datacamp website to obtain a certificate on deep learning python. Completed :mortar_board:
 
 
 ## nn_scratch.R
