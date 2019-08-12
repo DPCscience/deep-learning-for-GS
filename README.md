@@ -19,7 +19,7 @@ The basic structure ofa densely connected network consists of an input layer, L 
 From paper DeepGS Predicting phenotypes from genotypes using Deep learning. The paper is interesting because they followed a different approach, instead of a MLP, ANN or NN they use a convolutional neural network approach (CNN) and it is also not implemented in Keras. The code is implemented using MXNet, if you want to know more about the differences between DL/AI frameworks see https://skymind.com/wiki/comparison-frameworks-dl4j-tensorflow-pytorch. In brief MXNet is faster and has higher accuracy 🔥 🔥 and it can be implemented as a Keras backend, I plan to convert the DeepGS code to Keras R just because I plan to stick to Keras ..for the moment.
 
 ## Yield-Prediction_Saeed from github saeedkhaki92/Yield-Prediction-DNN
-From the 2018 Syngenta Crop Challenge to predict yield performance. This code is implemented in TensorFlow, interestingly it incorporates three sets: crop genotype,yield perfomance (difference between yield and yield of checks) and environment.To do is to convert the code to Keras R/python.
+From the 2018 Syngenta Crop Challenge to predict yield performance :Crop yield prediction using deep neural networks. This code is implemented in TensorFlow, interestingly it incorporates three sets: crop genotype,yield perfomance (difference between yield and yield of checks) and environment.To do is to convert the code to Keras R/python.
 
 
 ## related to deep learning not GP
