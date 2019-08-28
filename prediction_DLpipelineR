@@ -2,7 +2,12 @@
 ### WARNING while the code presented here has been tested with the datasets are Wheat X and Y from BGLR R package, 
 ### The last section of the Enciso python code still has to be translated...coming soon :) comments and suggestions duniapc77@gmail.com
 
+#from talos.utils import live
+#for jupyter notebook with python3 in a mac works for ubuntu
+#python3 -m pip install ipykernel
+#python3 -m ipykernel install --user
 ##History function KerasR
+
 LossHistory <- R6::R6Class("LossHistory",
                            inherit = KerasCallback,
                            
@@ -18,7 +23,6 @@ LossHistory <- R6::R6Class("LossHistory",
 #### DLpipeline Enciso
 ####################################################
 
-setwd("~/Desktop/deep learning NIR/")
 library("keras")
 library("tensorflow")
 # Implements a standard fully connected network (MLP) for a quantitative target
@@ -233,5 +237,21 @@ p1<-ggcorrplot(
   lab = TRUE
 )
 
+###MLP example with multiclass target
+yi_train<-data.frame()
+for (i in seq(y_train)){
+  res<-round((y_train[i]-min(y_train))/2)
+  yi_train<-rbind(yi_train,res)
+  }
+table(yi_train)
 
+yi_test<-data.frame()
+for (i in seq(y_test)){
+  res<-round((y_test[i]-min(y_test))/2)
+  yi_test<-rbind(yi_test,res)
+}
+table(yi_test)
+
+n_train=length(yi_train)
+itemp = to_categorical(c(yi_train$X1,yi_test$X2))
 
