@@ -3,6 +3,23 @@
 Scripts for genomic prediction with deep learning . Application of deep learning to agriculture. 
 Comments, suggestions, corrections :mailbox: duniapc77@gmail.com
 
+## papers on the subject
+Deep learning versus parametric and ensemble methods for genomic prediction of complex phenotypes
+Rostam Abdollahi-Arpanahi
+https://gsejournal.biomedcentral.com/articles/10.1186/s12711-020-00531-z
+
+Exploring Deep Learning for Complex Trait Genomic Prediction in Polyploid Outcrossing Species
+Laura M. Zingaretti1*
+https://doi.org/10.3389/fpls.2020.00025
+
+
+Can Deep Learning Improve Genomic Prediction of Complex Human Traits?
+Pau Bellot
+https://doi.org/10.1534/genetics.118.301298
+
+A Guide on Deep Learning for Complex Trait Genomic Prediction
+by Miguel Pérez-Enciso
+https://doi.org/10.3390/genes10070553
 
 ## Prediction_DLpipeline.R 
 Code from Enciso-see repository DLpipeline- written in Python translated to Keras R.While most of the code is verbatim, the hyperparameter tuning has been adapted to R capabilities by implementing a grid search instead of a random search.
