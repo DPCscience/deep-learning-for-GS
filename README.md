@@ -5,10 +5,13 @@ Comments, suggestions, corrections :mailbox: duniapc77@gmail.com
 
 ## papers on the subject
 Deep learning versus parametric and ensemble methods for genomic prediction of complex phenotypes
+
 Rostam Abdollahi-Arpanahi
+
 https://gsejournal.biomedcentral.com/articles/10.1186/s12711-020-00531-z
 
 Exploring Deep Learning for Complex Trait Genomic Prediction in Polyploid Outcrossing Species
+
 Laura M. Zingaretti1*
 https://doi.org/10.3389/fpls.2020.00025
 
